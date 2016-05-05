@@ -1,4 +1,4 @@
---Run this code in the SQL tab in the database
+--Run code in SQL tab
 
 
 DELIMITER $$
