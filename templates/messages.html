@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block extra_css_js %}
+
+    <script>
+    $(document).ready(function() {
+
+      $(".messageItem").click(function () {
+        $(this).find('.togglearrow').toggleClass("fa-caret-right  fa-caret-down");
+        $(this).find('p').toggleClass("in");  //collapse class alone hides data and in class shows it
+      });
+
+      // unneeded as the page reloads when the x button is clicked
+      // just keeping here for reference
+
+      //i changed my mind from the above comment
+      //this immediately removes the item so it looks cleaner
+      $(".closemessage").click(function () {
+        // $(this).remove();
+        $(this).parents('li').remove();
+      });
+
+    });
+    </script>
+
+{% endblock %}
+
+{% block page %}Messages{% endblock %}
+
+{% block content %}
+    
+    <button id="btnSignUp" class="btn btn-primary" href="/createmessage">Create New Message</button>
+    <br>
+    <br>
+   {% if messages_data %} 
+        <ul class ='list-group'>
+            {% for message_item in messages_data %}
+            
+                <li class="messageItem btn list-group-item">
+                    <u>{{message_item[4]}} </u>
+                    <h2 class="list-group-item-heading">
+                        {{message_item[1]}} 
+                        <div class="togglearrow fa fa-caret-right"></div>
+                        <div class="closemessage fa fa-times-circle"><a class="deletemessage" href="/deletemessage/{{message_item[0]}}"></a></div>
+                    </h2>
+                    <p class="list-group-item-text collapse">{{message_item[2]}}</p>
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>You have no messages</p>
+    {% endif %}
+
+{% endblock %}

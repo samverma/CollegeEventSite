@@ -1,0 +1,22 @@
+{% macro nav_link(endpoint, name, icon) %}
+    {% if request.endpoint.endswith(endpoint) %}
+      <li class="active"><a href="{{ url_for(endpoint) }}"><i class="{{icon}}"></i>&nbsp;{{name}}</a></li>
+    {% else %}
+      <li><a href="{{ url_for(endpoint) }}"><i class="{{icon}}"></i>&nbsp;{{name}}</a></li>
+    {% endif %}
+{% endmacro %}
+
+
+{% macro flash_msg() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flash">
+        {% for category, message in messages %}
+            <li class="alert {{category}} flash"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>{{message}}</strong> 
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+{% endmacro %}        

@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+
+{% block extra_css_js %}
+
+    <!-- Include Required Prerequisites -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+ 
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-formhelpers.min.css">
+    <script src="../static/js/bootstrap-formhelpers-phone.format.js"></script>
+    <script src="../static/js/bootstrap-formhelpers-phone.js"></script>
+
+
+
+    <script type="text/javascript">
+            $(document).ready(function() {
+
+                $('#show-me').hide(); 
+
+                var start = moment().startOf('minute');
+                var remainder = (60 - start.minute()) % 30;
+                var minDate = moment(start).add("minutes", remainder );
+                var endDate = moment(minDate).add("minutes", 30);
+
+                $('input[name="eventDate"]').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                minDate: moment(minDate),
+                startDate:moment(minDate),
+                endDate: moment(endDate),
+                drops: "up",
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm a'
+                }
+                });
+
+                $( "#myform" ).submit(function( event ) {
+                    var submitStartDate = $('#eventDate').data('daterangepicker').startDate.format("MM/DD/YYYY hh:mm a");
+                    document.getElementById('eventStart').value = submitStartDate;
+
+                    var submitEndDate = $('#eventDate').data('daterangepicker').endDate.format("MM/DD/YYYY hh:mm a");
+                    document.getElementById('eventEnd').value = submitEndDate;                
+                });
+
+                $('input[type="radio"]').click(function() {
+                   if($(this).attr('value') == 'rso') {
+                        $('#show-me').show();           
+                   }
+
+                   else {
+                        $('#show-me').hide();   
+                   }
+               });
+
+            });
+
+    </script>
+
+{% endblock %}
+
+
+{% block page %}Create Event{% endblock %}
+
+{% block content %}
+    <form class="form-signin" name="myform" id="myform" action="/validate_event" method="post">
+        
+        <label for="eventName" class="sr-only">Event Name</label>
+        <input type="name" name="eventName" id="eventName" class="form-control" placeholder="Event Name" value="{{request.form.eventName}}" required autofocus>
+
+        <label for="eventDescription" class="sr-only">Event Description</label>
+        <input type="name" name="eventDescription" id="eventDescription" class="form-control" placeholder="Event Description" value= "{{request.form.eventDescription}}"  required>
+
+        <label for="eventEmail" class="sr-only">Event Email</label>
+        <input type="email" name="eventEmail" id="eventEmail" class="form-control" placeholder="Event@University.edu" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.edu$" value= "{{request.form.eventEmail}}"  required>
+         
+        <label for="eventPhone" class="sr-only">Event Phone</label>
+        <input type="text" name="eventPhone" id="eventPhone" class="form-control bfh-phone" data-country="US" placeholder="(123) 123-4567" value= "{{request.form.eventPhone}}" required>
+
+        <label for="eventLocation" class="sr-only">Event Location</label>
+        <input type="text" name="eventLocation" id="eventLocation" class="form-control" placeholder="Event Location" value= "{{request.form.eventLocation}}" required>
+
+        <div class='input-group date' id='datetimepicker1'>
+                    <input type='text' name="eventDate" id="eventDate" class="form-control" placeholder="Event Date & Time" />
+                    <span class="input-group-addon"><script type="text/javascript"></script>
+                        <span class="glyphicon glyphicon-calendar" id="calenderchoose"></span>
+                    </span>
+        </div>
+
+            <input type="hidden" name="eventStart" id="eventStart" />
+
+        <input type="hidden" name="eventEnd" id="eventEnd" />
+
+        <input type="hidden" name="hostUniversity" id="hostUniversity" />
+        
+        <div class="radiobuffer">
+            <label class="radio-inline">
+                <input type="radio" name="eventType" value='public' checked >Public
+            </label>   
+            <label class="radio-inline">
+                <input type="radio" name="eventType" value='private'>Private
+            </label> 
+            <label class="radio-inline">
+                <input type="radio" name="eventType" value='rso'>RSO
+            </label> 
+        </div>
+
+        <div id='show-me'>
+        <p>Select affiliated RSO:</p>
+        <select name="rsoSelector" id="rsoSelector" style="width:100%" required>
+            {% for rso in rsos_list %}
+                <option value="{{rso}}" data-one="{{rso}}"> {{rso}} </option>
+            {% endfor %}
+        </select>
+        </div>
+
+        <div class="push"></div>
+
+        <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Create Event</button>
+        
+    </form>
+{% endblock %}   
+
+

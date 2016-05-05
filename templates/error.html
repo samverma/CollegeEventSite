@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block page %}Oh No!{% endblock %}
+
+{% if request.endspoint == "None" %}
+    {% block header %}{% endblock %}
+{% endif %}
+
+{% block content %}
+    <p>{{error}}</p>
+    <div class='error-image'>
+    <img src="../static/img/Sadfacevector.svg">
+    </div>
+{% endblock %}

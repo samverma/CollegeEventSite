@@ -1,0 +1,110 @@
+s{% extends "layout.html" %}
+ 
+{% block extra_css_js %}
+
+ <style>
+  #map {
+        height: 250px;
+        width: 100%;
+  }
+ </style>
+
+
+    <script type="text/javascript">
+            $(document).ready(function() {
+                initialize();
+            });
+    </script>
+
+{% endblock %}
+
+
+{% block header %} {% include 'header_home.html' %} {% endblock %}
+ 
+{% block page %}Event Profile{% endblock %}
+ 
+{% block content %}
+
+    <h1>{{eventinfo[0]}}</h1>
+    <p>{{eventinfo[1]}}</p>
+        
+    <div class="well well-sm">
+    <div id="map"></div>
+    </div>
+
+    <div>
+    <p>{{eventinfo[4]}}</p>
+    <p>{{eventinfo[6]}} - {{eventinfo[7]}}</p>
+
+    <div class="well well-sm">
+        <h3>Contact</h3>
+        <p>{{eventinfo[2]}}</p>
+        <p>{{eventinfo[3]}}</p>
+    </div>
+
+    <div class = "push"></div>
+    <p>Comments:</p>
+    <ul class ='list-group'>
+        {% for comment_item in comments %}
+        <a href="#" class="list-group-item" >
+            <li>
+                <h2 class="list-group-item-heading">{{comment_item[0]}}</h2>
+                <p class="list-group-item-text">{{comment_item[1]}}</p>
+            </li>
+        </a>
+        {% endfor %}
+    </ul>
+
+
+    <form class="form-signin" action="/validate_comment" method="post">
+        
+        <label for="commentBody" class="sr-only">Message Body</label>
+        <textarea rows="3" name="commentBody" id="commentBody" class="form-control" placeholder="Type your comment here"></textarea>
+
+        <div class="push"></div>
+
+        <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="submit">Post Comment</button>
+
+        <input type="hidden" name="eventId" id="eventId" value="{{eventinfo[5]}}"/>
+        
+    </form>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
+<script>
+
+    var geocoder;
+    var map;
+    var mapOptions = {
+    zoom: 15,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+
+    function initialize() {
+        geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        codeAddress();
+    }
+
+    function codeAddress() {
+    var address = '{{eventinfo[4]}}'
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        map.setCenter(results[0].geometry.location);
+
+        marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location,
+            draggable: false
+        });
+      } 
+      else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    }); 
+  }
+
+</script>
+
+
+
+{% endblock %}
